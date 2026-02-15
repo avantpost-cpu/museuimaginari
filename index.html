@@ -123,6 +123,55 @@ html.preview-couleurs .header{
   outline-offset:2px;
 }
 
+/* =========================
+   Lang switch (CAT/EN) luxe
+   ========================= */
+.lang{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-left:4px;
+  padding:2px 6px;
+  border-radius:999px;
+  border:1px solid rgba(17,17,17,.10);
+  background:rgba(255,255,255,.12);
+  backdrop-filter: blur(10px);
+}
+
+.lang-btn{
+  appearance:none;
+  border:0;
+  background:transparent;
+  padding:6px 6px;
+  margin:0;
+  cursor:pointer;
+  font:inherit;
+  font-size:11px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:rgba(17,17,17,.55);
+  border-radius:999px;
+  line-height:1;
+  transition: color 220ms var(--ease), background 220ms var(--ease), opacity 220ms var(--ease);
+  opacity:.85;
+}
+.lang-btn:hover{
+  color:rgba(17,17,17,.9);
+  background:rgba(17,17,17,.04);
+  opacity:1;
+}
+.lang-btn[aria-pressed="true"]{
+  color:rgba(17,17,17,.95);
+  opacity:1;
+}
+
+.lang-sep{
+  font-size:11px;
+  letter-spacing:.1em;
+  color:rgba(17,17,17,.28);
+  transform: translateY(-.5px);
+}
+
 .state{
   font-size:12px;
   color:rgba(17,17,17,.5);
@@ -133,6 +182,8 @@ html.preview-couleurs .header{
 @media (max-width:560px){
   .header-inner{ flex-wrap:wrap; gap:8px 10px; }
   .state{ order:3; width:100%; }
+  .lang{ padding:1px 6px; }
+  .lang-btn{ font-size:10px; padding:6px 5px; }
 }
 
 /* =========================
@@ -626,6 +677,13 @@ html.preview-couleurs .lb-backdrop{
       <button type="button" id="navPhotos">Fotos</button>
       <button type="button" id="navContact">Contacte</button>
       <button type="button" id="navFull" aria-pressed="false" title="Pantalla completa">Pantalla completa</button>
+
+      <!-- 🌐 Lang switch (luxe : CAT / EN) -->
+      <div class="lang" role="group" aria-label="Language">
+        <button type="button" class="lang-btn" id="langCA" aria-pressed="true" title="Català">CAT</button>
+        <span class="lang-sep" aria-hidden="true">/</span>
+        <button type="button" class="lang-btn" id="langEN" aria-pressed="false" title="English">EN</button>
+      </div>
     </nav>
 
     <div class="state" id="stateTxt">Inici</div>
@@ -641,17 +699,17 @@ html.preview-couleurs .lb-backdrop{
 
       <div class="cell2" id="cell2">
         <img id="i2" src="https://avantpost-cpu.github.io/depot-quiz/gala2/intro2.jpg" alt="">
-        <a class="hotspot" href="#" aria-label="Afficher Dibuixos i colors" onclick="return false;"></a>
+        <a class="hotspot" href="#" aria-label="Mostrar Dibuixos i colors" onclick="return false;"></a>
       </div>
 
       <div class="cell3" id="cell3">
         <img id="i3" src="https://avantpost-cpu.github.io/depot-quiz/gala2/intro3.jpg" alt="">
-        <a class="hotspot" href="#" aria-label="Afficher Esculturas" onclick="return false;"></a>
+        <a class="hotspot" href="#" aria-label="Mostrar Esculturas" onclick="return false;"></a>
       </div>
 
       <div class="cell4" id="cell4">
         <img id="i4" src="https://avantpost-cpu.github.io/depot-quiz/gala2/intro4.jpg" alt="">
-        <a class="hotspot" href="#" aria-label="Afficher Fotos" onclick="return false;"></a>
+        <a class="hotspot" href="#" aria-label="Mostrar Fotos" onclick="return false;"></a>
       </div>
     </div>
 
@@ -716,16 +774,30 @@ html.preview-couleurs .lb-backdrop{
 
 <script>
 /* =========================
-   ✅ 0) Libellés centralisés (changer ici suffit)
+   ✅ 0) i18n (menus CAT/EN)
    ========================= */
-const LABELS = {
-  home: "Inici",
-  couleurs: "Dibuixos i colors",
-  esculturas: "Esculturas",
-  photos: "Fotos",
-  contact: "Contacte",
-  fullscreen: "Pantalla completa"
+const I18N = {
+  ca: {
+    home: "Inici",
+    couleurs: "Dibuixos i colors",
+    esculturas: "Esculturas",
+    photos: "Fotos",
+    contact: "Contacte",
+    fullscreen: "Pantalla completa",
+    hotspotShow: "Mostrar"
+  },
+  en: {
+    home: "Home",
+    couleurs: "Drawings & Colors",
+    esculturas: "Sculptures",
+    photos: "Photos",
+    contact: "Contact",
+    fullscreen: "Full screen",
+    hotspotShow: "Open"
+  }
 };
+
+let lang = localStorage.getItem("mui_lang") || "ca";
 
 /* =========================
    1) Calage colonnes accueil sur largeurs réelles
@@ -906,7 +978,7 @@ const lbPrev     = document.getElementById("lbPrev");
 const lbNext     = document.getElementById("lbNext");
 
 let lbIndex = 1;
-let lbMode  = "couleurs";
+let lbMode  = "couleurs"; // "couleurs" | "esculturas"
 
 function isLightboxOpen(){ return lightbox.classList.contains("open"); }
 function getCount(){ return lbMode === "esculturas" ? ESC_COUNT : OBRA_COUNT; }
@@ -986,40 +1058,60 @@ const navContact  = document.getElementById("navContact");
 const homeLink = document.getElementById("homeLink");
 const navFull  = document.getElementById("navFull");
 
+const btnCA = document.getElementById("langCA");
+const btnEN = document.getElementById("langEN");
+
 const couleursEl = document.getElementById("couleurs");
 const esculturasEl = document.getElementById("esculturas");
 
 let lock = null; // null | "couleurs" | "esculturas" | "photos"
 
-/* ✅ applique les libellés (changer LABELS suffit) */
-navHome.textContent = LABELS.home;
-navCouleurs.textContent = LABELS.couleurs;
-navEsculturas.textContent = LABELS.esculturas;
-navPhotos.textContent = LABELS.photos;
-navContact.textContent = LABELS.contact;
-navFull.textContent = LABELS.fullscreen;
-navFull.setAttribute("title", LABELS.fullscreen);
-
-/* ✅ aria-labels hotspots */
-cell2.querySelector(".hotspot")?.setAttribute("aria-label", `Afficher ${LABELS.couleurs}`);
-cell3.querySelector(".hotspot")?.setAttribute("aria-label", `Afficher ${LABELS.esculturas}`);
-cell4.querySelector(".hotspot")?.setAttribute("aria-label", `Afficher ${LABELS.photos}`);
-
 function setStateLabel(){
+  const t = I18N[lang];
   stateTxt.textContent =
-    lock === "couleurs"    ? LABELS.couleurs
-  : lock === "esculturas"  ? LABELS.esculturas
-  : lock === "photos"      ? LABELS.photos
-  : LABELS.home;
+    lock === "couleurs"    ? t.couleurs
+  : lock === "esculturas"  ? t.esculturas
+  : lock === "photos"      ? t.photos
+  : t.home;
 }
 
-/* fond (couleurs) */
 function syncBg(previewCouleurs=false){
   const lockedCouleurs = (lock === "couleurs");
   const wantsCouleurs = lockedCouleurs || previewCouleurs;
   document.documentElement.classList.toggle("bg-couleurs", lockedCouleurs);
   document.documentElement.classList.toggle("preview-couleurs", wantsCouleurs && !lockedCouleurs);
 }
+
+function applyLang(next){
+  lang = next;
+  localStorage.setItem("mui_lang", lang);
+  const t = I18N[lang];
+
+  navHome.textContent = t.home;
+  navCouleurs.textContent = t.couleurs;
+  navEsculturas.textContent = t.esculturas;
+  navPhotos.textContent = t.photos;
+  navContact.textContent = t.contact;
+
+  navFull.textContent = t.fullscreen;
+  navFull.setAttribute("title", t.fullscreen);
+
+  cell2.querySelector(".hotspot")?.setAttribute("aria-label", `${t.hotspotShow} ${t.couleurs}`);
+  cell3.querySelector(".hotspot")?.setAttribute("aria-label", `${t.hotspotShow} ${t.esculturas}`);
+  cell4.querySelector(".hotspot")?.setAttribute("aria-label", `${t.hotspotShow} ${t.photos}`);
+
+  btnCA?.setAttribute("aria-pressed", String(lang === "ca"));
+  btnEN?.setAttribute("aria-pressed", String(lang === "en"));
+
+  setStateLabel();
+}
+
+/* init i18n */
+applyLang(lang);
+
+/* clic langues */
+btnCA?.addEventListener("click", ()=>applyLang("ca"));
+btnEN?.addEventListener("click", ()=>applyLang("en"));
 
 setStateLabel();
 syncBg(false);
