@@ -5,12 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Un museu imaginari</title>
 
-<!-- ✅ FAVICON (mets les fichiers à la racine du site) -->
-<link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<!-- ✅ FAVICONS MODERNES (GitHub Pages /museuimaginari → chemins relatifs ./ ) -->
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+<link rel="manifest" href="./site.webmanifest">
 <meta name="theme-color" content="#f0f0f3">
+<meta name="color-scheme" content="light">
 
 <style>
 :root{
@@ -617,15 +620,15 @@ html.preview-couleurs .lb-backdrop{
     <a class="brand" href="#" id="homeLink">Un museu imaginari</a>
 
     <nav class="nav" aria-label="Navigation">
-      <button type="button" id="navHome">Accueil</button>
-      <button type="button" id="navCouleurs">Couleurs</button>
+      <button type="button" id="navHome">Inici</button>
+      <button type="button" id="navCouleurs">Dibuixos i colors</button>
       <button type="button" id="navEsculturas">Esculturas</button>
-      <button type="button" id="navPhotos">Photos</button>
+      <button type="button" id="navPhotos">Fotos</button>
       <button type="button" id="navContact">Contacte</button>
-      <button type="button" id="navFull" aria-pressed="false" title="Plein écran">Plein écran</button>
+      <button type="button" id="navFull" aria-pressed="false" title="Pantalla completa">Pantalla completa</button>
     </nav>
 
-    <div class="state" id="stateTxt">Accueil</div>
+    <div class="state" id="stateTxt">Inici</div>
   </div>
 </header>
 
@@ -638,7 +641,7 @@ html.preview-couleurs .lb-backdrop{
 
       <div class="cell2" id="cell2">
         <img id="i2" src="https://avantpost-cpu.github.io/depot-quiz/gala2/intro2.jpg" alt="">
-        <a class="hotspot" href="#" aria-label="Afficher Couleurs" onclick="return false;"></a>
+        <a class="hotspot" href="#" aria-label="Afficher Dibuixos i colors" onclick="return false;"></a>
       </div>
 
       <div class="cell3" id="cell3">
@@ -648,12 +651,12 @@ html.preview-couleurs .lb-backdrop{
 
       <div class="cell4" id="cell4">
         <img id="i4" src="https://avantpost-cpu.github.io/depot-quiz/gala2/intro4.jpg" alt="">
-        <a class="hotspot" href="#" aria-label="Afficher Photos" onclick="return false;"></a>
+        <a class="hotspot" href="#" aria-label="Afficher Fotos" onclick="return false;"></a>
       </div>
     </div>
 
     <!-- OVERLAY COULEURS -->
-    <div class="overlay" id="couleurs" aria-label="Couleurs">
+    <div class="overlay" id="couleurs" aria-label="Dibuixos i colors">
       <div class="couleurs-ui" aria-label="Exposition thématique">
         <button class="pill" id="thAll" type="button" aria-pressed="true">Tous</button>
         <button class="pill" id="thA" type="button" aria-pressed="false">Série A</button>
@@ -675,8 +678,8 @@ html.preview-couleurs .lb-backdrop{
     </div>
 
     <!-- OVERLAY PHOTOS -->
-    <div class="overlay" id="photos" aria-label="Photos">
-      <img src="https://avantpost-cpu.github.io/depot-quiz/gala2/photos.png" alt="Photos">
+    <div class="overlay" id="photos" aria-label="Fotos">
+      <img src="https://avantpost-cpu.github.io/depot-quiz/gala2/photos.png" alt="Fotos">
     </div>
 
     <!-- LIGHTBOX unique (Couleurs + Esculturas) -->
@@ -943,6 +946,7 @@ lbBackdrop.addEventListener("click", closeLightbox);
 lbPrev.addEventListener("click", prevImage);
 lbNext.addEventListener("click", nextImage);
 
+/* swipe horizontal */
 let sx=null, sy=null;
 lbSwipe.addEventListener("touchstart", (e)=>{
   if(!e.touches?.length) return;
@@ -985,18 +989,18 @@ const navFull  = document.getElementById("navFull");
 const couleursEl = document.getElementById("couleurs");
 const esculturasEl = document.getElementById("esculturas");
 
-let lock = null;
+let lock = null; // null | "couleurs" | "esculturas" | "photos"
 
-/* ✅ applique les libellés */
+/* ✅ applique les libellés (changer LABELS suffit) */
 navHome.textContent = LABELS.home;
 navCouleurs.textContent = LABELS.couleurs;
 navEsculturas.textContent = LABELS.esculturas;
 navPhotos.textContent = LABELS.photos;
 navContact.textContent = LABELS.contact;
 navFull.textContent = LABELS.fullscreen;
-/* ✅ title du bouton plein écran */
 navFull.setAttribute("title", LABELS.fullscreen);
 
+/* ✅ aria-labels hotspots */
 cell2.querySelector(".hotspot")?.setAttribute("aria-label", `Afficher ${LABELS.couleurs}`);
 cell3.querySelector(".hotspot")?.setAttribute("aria-label", `Afficher ${LABELS.esculturas}`);
 cell4.querySelector(".hotspot")?.setAttribute("aria-label", `Afficher ${LABELS.photos}`);
@@ -1009,6 +1013,7 @@ function setStateLabel(){
   : LABELS.home;
 }
 
+/* fond (couleurs) */
 function syncBg(previewCouleurs=false){
   const lockedCouleurs = (lock === "couleurs");
   const wantsCouleurs = lockedCouleurs || previewCouleurs;
