@@ -621,6 +621,8 @@ html.preview-couleurs .lb-backdrop{
       <button type="button" id="navCouleurs">Couleurs</button>
       <button type="button" id="navEsculturas">Esculturas</button>
       <button type="button" id="navPhotos">Photos</button>
+      <!-- ✅ NOUVEAU : CONTACTE -->
+      <button type="button" id="navContact">Contacte</button>
       <button type="button" id="navFull" aria-pressed="false" title="Plein écran">Plein écran</button>
     </nav>
 
@@ -719,6 +721,7 @@ const LABELS = {
   couleurs: "Dibuixos i colors",
   esculturas: "Esculturas",
   photos: "Fotos",
+  contact: "Contacte",
   fullscreen: "Plein écran"
 };
 
@@ -778,15 +781,11 @@ function buildObraGrid(){
 buildObraGrid();
 
 /* =========================
-   2b) Esculturas = 16 PNG (4x4) depuis /esculturas/
-   NOMS EXACTS fournis
+   2b) Esculturas = 16 PNG (4x4)
    ========================= */
 const escGrid = document.getElementById("escGrid");
 
-/* ⚠️ IMPORTANT :
-   tu avais écrit "https://.../gala2/Esculturas/" (avec majuscule + dans gala2)
-   or tu m'avais dit dossier /esculturas à la racine.
-   ✅ Je remets la version correcte : /esculturas/ (minuscule) */
+/* ✅ dossier actuel (tel que ton code) */
 const ESC_BASE = "https://avantpost-cpu.github.io/depot-quiz/gala2/Esculturas/";
 
 const ESC_FILES = [
@@ -983,6 +982,7 @@ const navHome  = document.getElementById("navHome");
 const navCouleurs = document.getElementById("navCouleurs");
 const navEsculturas = document.getElementById("navEsculturas");
 const navPhotos   = document.getElementById("navPhotos");
+const navContact  = document.getElementById("navContact");
 const homeLink = document.getElementById("homeLink");
 const navFull  = document.getElementById("navFull");
 
@@ -996,6 +996,7 @@ navHome.textContent = LABELS.home;
 navCouleurs.textContent = LABELS.couleurs;
 navEsculturas.textContent = LABELS.esculturas;
 navPhotos.textContent = LABELS.photos;
+navContact.textContent = LABELS.contact;
 navFull.textContent = LABELS.fullscreen;
 
 /* ✅ met à jour aussi les aria-labels des hotspots (pour cohérence) */
@@ -1075,12 +1076,12 @@ cell3.querySelector(".hotspot").addEventListener("click", (e)=>{ e.preventDefaul
 cell4.querySelector(".hotspot").addEventListener("click", (e)=>{ e.preventDefault(); setLock("photos"); });
 
 /* Menu */
-function stop(e){ e.preventDefault(); }
 navHome.addEventListener("click", clearLock);
 navCouleurs.addEventListener("click", ()=>setLock("couleurs"));
 navEsculturas.addEventListener("click", ()=>setLock("esculturas"));
 navPhotos.addEventListener("click", ()=>setLock("photos"));
-homeLink.addEventListener("click", (e)=>{ stop(e); clearLock(); });
+navContact.addEventListener("click", ()=>{ window.location.href = "mailto:gala@vilarrasa.net"; });
+homeLink.addEventListener("click", (e)=>{ e.preventDefault(); clearLock(); });
 
 /* Clavier */
 window.addEventListener("keydown", (e) => {
