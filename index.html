@@ -617,13 +617,12 @@ html.preview-couleurs .lb-backdrop{
     <a class="brand" href="#" id="homeLink">Un museu imaginari</a>
 
     <nav class="nav" aria-label="Navigation">
-      <button type="button" id="navHome">Inici</button>
+      <button type="button" id="navHome">Accueil</button>
       <button type="button" id="navCouleurs">Couleurs</button>
       <button type="button" id="navEsculturas">Esculturas</button>
       <button type="button" id="navPhotos">Photos</button>
-      <!-- ✅ NOUVEAU : CONTACTE -->
       <button type="button" id="navContact">Contacte</button>
-      <button type="button" id="navFull" aria-pressed="false" title="Plein écran">Pantalla completa</button>
+      <button type="button" id="navFull" aria-pressed="false" title="Plein écran">Plein écran</button>
     </nav>
 
     <div class="state" id="stateTxt">Accueil</div>
@@ -717,12 +716,12 @@ html.preview-couleurs .lb-backdrop{
    ✅ 0) Libellés centralisés (changer ici suffit)
    ========================= */
 const LABELS = {
-  home: "Accueil",
+  home: "Inici",
   couleurs: "Dibuixos i colors",
   esculturas: "Esculturas",
   photos: "Fotos",
   contact: "Contacte",
-  fullscreen: "Plein écran"
+  fullscreen: "Pantalla completa"
 };
 
 /* =========================
@@ -784,8 +783,6 @@ buildObraGrid();
    2b) Esculturas = 16 PNG (4x4)
    ========================= */
 const escGrid = document.getElementById("escGrid");
-
-/* ✅ dossier actuel (tel que ton code) */
 const ESC_BASE = "https://avantpost-cpu.github.io/depot-quiz/gala2/Esculturas/";
 
 const ESC_FILES = [
@@ -809,7 +806,7 @@ const ESC_FILES = [
 const ESC_COUNT = ESC_FILES.length;
 
 function escUrl(i){
-  return ESC_BASE + ESC_FILES[i - 1]; // i=1..16
+  return ESC_BASE + ESC_FILES[i - 1];
 }
 
 function buildEscGrid(){
@@ -906,7 +903,7 @@ const lbPrev     = document.getElementById("lbPrev");
 const lbNext     = document.getElementById("lbNext");
 
 let lbIndex = 1;
-let lbMode  = "couleurs"; // "couleurs" | "esculturas"
+let lbMode  = "couleurs";
 
 function isLightboxOpen(){ return lightbox.classList.contains("open"); }
 function getCount(){ return lbMode === "esculturas" ? ESC_COUNT : OBRA_COUNT; }
@@ -946,7 +943,6 @@ lbBackdrop.addEventListener("click", closeLightbox);
 lbPrev.addEventListener("click", prevImage);
 lbNext.addEventListener("click", nextImage);
 
-/* swipe horizontal */
 let sx=null, sy=null;
 lbSwipe.addEventListener("touchstart", (e)=>{
   if(!e.touches?.length) return;
@@ -989,17 +985,18 @@ const navFull  = document.getElementById("navFull");
 const couleursEl = document.getElementById("couleurs");
 const esculturasEl = document.getElementById("esculturas");
 
-let lock = null; // null | "couleurs" | "esculturas" | "photos"
+let lock = null;
 
-/* ✅ applique les libellés (changer LABELS suffit) */
+/* ✅ applique les libellés */
 navHome.textContent = LABELS.home;
 navCouleurs.textContent = LABELS.couleurs;
 navEsculturas.textContent = LABELS.esculturas;
 navPhotos.textContent = LABELS.photos;
 navContact.textContent = LABELS.contact;
 navFull.textContent = LABELS.fullscreen;
+/* ✅ title du bouton plein écran */
+navFull.setAttribute("title", LABELS.fullscreen);
 
-/* ✅ met à jour aussi les aria-labels des hotspots (pour cohérence) */
 cell2.querySelector(".hotspot")?.setAttribute("aria-label", `Afficher ${LABELS.couleurs}`);
 cell3.querySelector(".hotspot")?.setAttribute("aria-label", `Afficher ${LABELS.esculturas}`);
 cell4.querySelector(".hotspot")?.setAttribute("aria-label", `Afficher ${LABELS.photos}`);
