@@ -106,6 +106,8 @@ html.preview-couleurs .header{
   align-items:center;
   flex-wrap:wrap;
 }
+
+/* ✅ style unique pour TOUS les boutons de navigation (menu + langues) */
 .nav button{
   appearance:none;
   border:0;
@@ -123,53 +125,24 @@ html.preview-couleurs .header{
   outline-offset:2px;
 }
 
-/* =========================
-   Lang switch (CAT/EN) luxe
-   ========================= */
+/* ✅ Lang switch inline, sans cartouche : même look que le menu */
 .lang{
   display:flex;
   align-items:center;
-  gap:6px;
-  margin-left:4px;
-  padding:2px 6px;
-  border-radius:999px;
-  border:1px solid rgba(17,17,17,.10);
-  background:rgba(255,255,255,.12);
-  backdrop-filter: blur(10px);
+  gap:0;
 }
-
-.lang-btn{
-  appearance:none;
-  border:0;
-  background:transparent;
-  padding:6px 6px;
-  margin:0;
-  cursor:pointer;
-  font:inherit;
-  font-size:11px;
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  color:rgba(17,17,17,.55);
-  border-radius:999px;
-  line-height:1;
-  transition: color 220ms var(--ease), background 220ms var(--ease), opacity 220ms var(--ease);
-  opacity:.85;
-}
-.lang-btn:hover{
-  color:rgba(17,17,17,.9);
-  background:rgba(17,17,17,.04);
-  opacity:1;
-}
-.lang-btn[aria-pressed="true"]{
-  color:rgba(17,17,17,.95);
-  opacity:1;
-}
-
 .lang-sep{
-  font-size:11px;
-  letter-spacing:.1em;
+  padding:0 2px;
   color:rgba(17,17,17,.28);
-  transform: translateY(-.5px);
+  font-size:13px;
+  letter-spacing:.18px;
+  user-select:none;
+}
+
+/* ✅ état actif très discret (comme un site luxe) */
+.lang .is-active{
+  color:var(--txt);
+  background:rgba(17,17,17,.04); /* exactement comme hover, mais stable */
 }
 
 .state{
@@ -182,8 +155,6 @@ html.preview-couleurs .header{
 @media (max-width:560px){
   .header-inner{ flex-wrap:wrap; gap:8px 10px; }
   .state{ order:3; width:100%; }
-  .lang{ padding:1px 6px; }
-  .lang-btn{ font-size:10px; padding:6px 5px; }
 }
 
 /* =========================
@@ -678,11 +649,11 @@ html.preview-couleurs .lb-backdrop{
       <button type="button" id="navContact">Contacte</button>
       <button type="button" id="navFull" aria-pressed="false" title="Pantalla completa">Pantalla completa</button>
 
-      <!-- 🌐 Lang switch (luxe : CAT / EN) -->
+      <!-- 🌐 CAT/EN : même style que le menu (pas de cartouche) -->
       <div class="lang" role="group" aria-label="Language">
-        <button type="button" class="lang-btn" id="langCA" aria-pressed="true" title="Català">CAT</button>
+        <button type="button" id="langCA">CAT</button>
         <span class="lang-sep" aria-hidden="true">/</span>
-        <button type="button" class="lang-btn" id="langEN" aria-pressed="false" title="English">EN</button>
+        <button type="button" id="langEN">EN</button>
       </div>
     </nav>
 
@@ -1058,6 +1029,7 @@ const navContact  = document.getElementById("navContact");
 const homeLink = document.getElementById("homeLink");
 const navFull  = document.getElementById("navFull");
 
+/* langues : ce sont aussi des boutons .nav button (même style) */
 const btnCA = document.getElementById("langCA");
 const btnEN = document.getElementById("langEN");
 
@@ -1100,8 +1072,9 @@ function applyLang(next){
   cell3.querySelector(".hotspot")?.setAttribute("aria-label", `${t.hotspotShow} ${t.esculturas}`);
   cell4.querySelector(".hotspot")?.setAttribute("aria-label", `${t.hotspotShow} ${t.photos}`);
 
-  btnCA?.setAttribute("aria-pressed", String(lang === "ca"));
-  btnEN?.setAttribute("aria-pressed", String(lang === "en"));
+  /* état actif : même “hover” que le menu, mais figé */
+  btnCA?.classList.toggle("is-active", lang === "ca");
+  btnEN?.classList.toggle("is-active", lang === "en");
 
   setStateLabel();
 }
